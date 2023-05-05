@@ -1,0 +1,45 @@
+name: Build Release Assets
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  RUST_BACKTRACE: full
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: "windows-latest"
+            extension: "dll"
+          - os: "macos-latest"
+            extension: "dylib"
+          - os: ubuntu-latest
+            extension: "so"
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Update Rust
+        run: rustup update --no-self-update stable
+
+      - name: Build
+        run: cargo build --release --locked --verbose
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./target/release/*.${{ matrix.extension }}
