@@ -1,0 +1,26 @@
+[package]
+name = "flac_codec_native"
+version = "0.1.0"
+description = "Rust side of FLACCodec"
+authors = ["Clazex <clazex.y@gmail.com>"]
+license = "MIT"
+edition = "2021"
+publish = false
+homepage = "https://github.com/Clazex/flac_codec_native#readme"
+repository = "https://github.com/Clazex/flac_codec_native/"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+symphonia = { version = "0.5.2", default-features = false, features = ["flac"] }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
+lto = true
+codegen-units = 1
+strip = true
